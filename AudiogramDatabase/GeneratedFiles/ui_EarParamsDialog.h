@@ -111,9 +111,6 @@ public:
         formLayout->setWidget(2, QFormLayout::LabelRole, label_3);
 
         autophonyCB = new QComboBox(EarParamsDialog);
-        autophonyCB->addItem(QString());
-        autophonyCB->addItem(QString());
-        autophonyCB->addItem(QString());
         autophonyCB->setObjectName(QString::fromUtf8("autophonyCB"));
 
         formLayout->setWidget(2, QFormLayout::FieldRole, autophonyCB);
@@ -124,9 +121,6 @@ public:
         formLayout->setWidget(3, QFormLayout::LabelRole, label_4);
 
         bingTestCB = new QComboBox(EarParamsDialog);
-        bingTestCB->addItem(QString());
-        bingTestCB->addItem(QString());
-        bingTestCB->addItem(QString());
         bingTestCB->setObjectName(QString::fromUtf8("bingTestCB"));
 
         formLayout->setWidget(3, QFormLayout::FieldRole, bingTestCB);
@@ -137,9 +131,6 @@ public:
         formLayout->setWidget(4, QFormLayout::LabelRole, label_5);
 
         federiciTestCB = new QComboBox(EarParamsDialog);
-        federiciTestCB->addItem(QString());
-        federiciTestCB->addItem(QString());
-        federiciTestCB->addItem(QString());
         federiciTestCB->setObjectName(QString::fromUtf8("federiciTestCB"));
 
         formLayout->setWidget(4, QFormLayout::FieldRole, federiciTestCB);
@@ -188,20 +179,8 @@ public:
         label->setText(QApplication::translate("EarParamsDialog", "Normal speech (m):", nullptr));
         label_2->setText(QApplication::translate("EarParamsDialog", "Whisper speech (m):", nullptr));
         label_3->setText(QApplication::translate("EarParamsDialog", "Occlusion autophony:", nullptr));
-        autophonyCB->setItemText(0, QApplication::translate("EarParamsDialog", "Not set", nullptr));
-        autophonyCB->setItemText(1, QApplication::translate("EarParamsDialog", "Yes", nullptr));
-        autophonyCB->setItemText(2, QApplication::translate("EarParamsDialog", "No", nullptr));
-
         label_4->setText(QApplication::translate("EarParamsDialog", "Bing test:", nullptr));
-        bingTestCB->setItemText(0, QApplication::translate("EarParamsDialog", "Not set", nullptr));
-        bingTestCB->setItemText(1, QApplication::translate("EarParamsDialog", "+", nullptr));
-        bingTestCB->setItemText(2, QApplication::translate("EarParamsDialog", "-", nullptr));
-
         label_5->setText(QApplication::translate("EarParamsDialog", "Federici test:", nullptr));
-        federiciTestCB->setItemText(0, QApplication::translate("EarParamsDialog", "Not set", nullptr));
-        federiciTestCB->setItemText(1, QApplication::translate("EarParamsDialog", "+ (T > M)", nullptr));
-        federiciTestCB->setItemText(2, QApplication::translate("EarParamsDialog", "- (T < M)", nullptr));
-
         savePB->setText(QApplication::translate("EarParamsDialog", "Save", nullptr));
         cancelPB->setText(QApplication::translate("EarParamsDialog", "Cancel", nullptr));
     } // retranslateUi

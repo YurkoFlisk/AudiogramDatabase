@@ -89,7 +89,7 @@
     </property>
     <addaction name="actionPatients"/>
     <addaction name="separator"/>
-    <addaction name="actionOptions"/>
+    <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -132,9 +132,9 @@
     <string>Edit patients</string>
    </property>
   </action>
-  <action name="actionOptions">
+  <action name="actionSettings">
    <property name="text">
-    <string>Options</string>
+    <string>Settings</string>
    </property>
   </action>
  </widget>

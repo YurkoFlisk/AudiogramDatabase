@@ -12,9 +12,9 @@ public:
 	inline static const QColor DEFAULT_AIR_COLOR = Qt::red;
 	inline static const QColor DEFAULT_BONE_COLOR = Qt::blue;
 
-	SettingsDialog(QWidget *parent, QSettings& settings);
+	SettingsDialog(QWidget *parent, const QSettings& settings, const QString& langsPath);
 	~SettingsDialog();
-	void initControls(const QSettings& settings);
+	void initControls(const QSettings& setting, const QString& langsPath);
 	void dumpControls(QSettings& settings);
 private:
 	Ui::SettingsDialog ui;

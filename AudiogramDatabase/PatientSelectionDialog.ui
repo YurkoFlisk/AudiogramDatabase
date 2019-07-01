@@ -94,5 +94,38 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>okPB</sender>
+   <signal>clicked()</signal>
+   <receiver>PatientSelectionDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>422</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelPB</sender>
+   <signal>clicked()</signal>
+   <receiver>PatientSelectionDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>427</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>448</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

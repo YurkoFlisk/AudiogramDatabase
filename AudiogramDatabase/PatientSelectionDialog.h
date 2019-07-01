@@ -8,9 +8,18 @@ class PatientSelectionDialog : public QDialog
 	Q_OBJECT
 
 public:
-	PatientSelectionDialog(QWidget *parent = Q_NULLPTR);
+	PatientSelectionDialog(bool selection, QWidget *parent = Q_NULLPTR);
 	~PatientSelectionDialog();
+	
+	void sAdd();
+	void sEdit();
+	void sDelete();
 
+	// Getters
+	int getSelectedPatient() const;
+	// Setters
+	void setSelectedPatient(int);
 private:
 	Ui::PatientSelectionDialog ui;
+	bool selection;
 };
