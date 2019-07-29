@@ -11,7 +11,7 @@ ColorPicker::ColorPicker(QWidget *parent, QColor color)
 	layout->addWidget(changePB);
 	setLayout(layout);
 
-	connect(changePB, QPushButton::clicked, this, ColorPicker::sColorDialog);
+	connect(changePB, &QPushButton::clicked, this, &ColorPicker::sColorDialog);
 }
 
 ColorPicker::~ColorPicker()

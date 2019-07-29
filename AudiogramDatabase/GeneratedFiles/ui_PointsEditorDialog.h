@@ -15,7 +15,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTableView>
 #include <QtWidgets/QVBoxLayout>
 
 QT_BEGIN_NAMESPACE
@@ -24,7 +24,7 @@ class Ui_PointsEditorDialog
 {
 public:
     QVBoxLayout *verticalLayout;
-    QTableWidget *pointsTW;
+    QTableView *pointsTV;
     QHBoxLayout *horizontalLayout;
     QPushButton *addPB;
     QPushButton *deletePB;
@@ -41,11 +41,15 @@ public:
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        pointsTW = new QTableWidget(PointsEditorDialog);
-        pointsTW->setObjectName(QString::fromUtf8("pointsTW"));
-        pointsTW->setSortingEnabled(false);
+        pointsTV = new QTableView(PointsEditorDialog);
+        pointsTV->setObjectName(QString::fromUtf8("pointsTV"));
+        pointsTV->setAlternatingRowColors(true);
+        pointsTV->setSelectionMode(QAbstractItemView::SingleSelection);
+        pointsTV->setSelectionBehavior(QAbstractItemView::SelectRows);
+        pointsTV->setSortingEnabled(false);
+        pointsTV->horizontalHeader()->setStretchLastSection(true);
 
-        verticalLayout->addWidget(pointsTW);
+        verticalLayout->addWidget(pointsTV);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);

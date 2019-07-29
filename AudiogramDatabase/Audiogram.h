@@ -1,7 +1,12 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include <QtCore>
+#include <QColor>
+
+inline const QColor DEFAULT_AIR_COLOR = Qt::red;
+inline const QColor DEFAULT_BONE_COLOR = Qt::blue;
 
 enum TestResult {
 	NOT_SET, POSITIVE, NEGATIVE, YES = POSITIVE, NO = NEGATIVE
@@ -24,21 +29,33 @@ struct Ear
 {
 	using PointList = std::vector<QPoint>;
 
-	PointList airCondPoints;
-	PointList boneCondPoints;
-	double normalSpeechThreshold;
-	double whisperSpeechThreshold;
-	TestResult occlusionAutophony;
-	TestResult bingTest;
-	TestResult federiciTest;
+	PointList airCondPoints = { {1000, 0} };
+	PointList boneCondPoints = { {1000, 0} };
+	double normalSpeechThreshold = 0.0;
+	double whisperSpeechThreshold = 0.0;
+	TestResult occlusionAutophony = NOT_SET;
+	TestResult bingTest = NOT_SET;
+	TestResult federiciTest = NOT_SET;
 };
 
 struct Audiogram
 {
 	static constexpr int NUM_SAMPLES = 2;
+	static constexpr int NUM_EARS = 2;
 	static constexpr int LEFT_EAR = 0;
 	static constexpr int RIGHT_EAR = 1;
+	static constexpr int BOTH_EARS = 2;
+	static constexpr int DEFAULT_MIN_FREQUENCY = 250;
+	static constexpr int DEFAULT_MAX_FREQUENCY = 8000;
 
-	Ear earData[NUM_SAMPLES][2];
-	Patient* patient;
+	using PatientID = int;
+	using EarList = std::array<std::array<Ear, NUM_EARS>, NUM_SAMPLES>;
+
+	Audiogram() = default;
+	Audiogram(PatientID patientID, const EarList& ears)
+		: patientID(patientID), earsData(ears)
+	{}
+
+	EarList earsData;
+	PatientID patientID;
 };

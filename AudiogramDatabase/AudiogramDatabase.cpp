@@ -13,17 +13,24 @@ AudiogramDatabase::AudiogramDatabase(QWidget *parent)
 
 	loadConfig();
 
-	connect(ui.actionNew, QAction::triggered, this, sNew);
-	connect(ui.actionExit, QAction::triggered, this, sExit);
-	connect(ui.actionAbout, QAction::triggered, this, sAbout);
-	connect(ui.actionOptions, QAction::triggered, this, sSettings);
-	connect(ui.actionPatients, QAction::triggered, this, sPatients);
+	connect(ui.newPB, &QPushButton::clicked, this, &AudiogramDatabase::sNew);
+	connect(ui.editPB, &QPushButton::clicked, this, &AudiogramDatabase::sEdit);
+	connect(ui.deletePB, &QPushButton::clicked, this, &AudiogramDatabase::sDelete);
+	connect(ui.actionExit, &QAction::triggered, this, &AudiogramDatabase::sExit);
+	connect(ui.actionAbout, &QAction::triggered, this, &AudiogramDatabase::sAbout);
+	connect(ui.actionSettings, &QAction::triggered, this, &AudiogramDatabase::sSettings);
+	connect(ui.actionPatients, &QAction::triggered, this, &AudiogramDatabase::sPatients);
+}
+
+AudiogramDatabase::~AudiogramDatabase()
+{
+	delete settings;
 }
 
 void AudiogramDatabase::loadConfig(void)
 {
-	QSettings settings(SETTINGS_FILE, QSettings::IniFormat);
-	setLanguage(settings.value("lang").toString());
+	settings = new QSettings(SETTINGS_FILE, QSettings::IniFormat);
+	setLanguage(settings->value("lang").toString());
 }
 
 void AudiogramDatabase::setLanguage(QString langCode)
@@ -37,9 +44,21 @@ void AudiogramDatabase::setLanguage(QString langCode)
 
 void AudiogramDatabase::sNew()
 {
-	NewAudiogramDialog newAudiogramDialog(this);
+	const QColor airCondColor = settings->value("airCondColor", DEFAULT_AIR_COLOR).value<QColor>();
+	const QColor boneCondColor = settings->value("boneCondColor", DEFAULT_BONE_COLOR).value<QColor>();
+	NewAudiogramDialog newAudiogramDialog(airCondColor, boneCondColor, this);
 	if (newAudiogramDialog.exec() != QDialog::Accepted)
 		return;
+
+}
+
+void AudiogramDatabase::sEdit()
+{
+
+}
+
+void AudiogramDatabase::sDelete()
+{
 
 }
 
@@ -56,11 +75,11 @@ void AudiogramDatabase::sAbout()
 
 void AudiogramDatabase::sSettings()
 {
-	QSettings settings(SETTINGS_FILE, QSettings::IniFormat);
-	SettingsDialog settingsDialog(this, settings, LANGUAGES_CONFIG);
+	SettingsDialog settingsDialog(this, *settings, LANGUAGES_CONFIG);
 	if (settingsDialog.exec() != QDialog::Accepted)
 		return;
-	settingsDialog.dumpControls(settings);
+	settingsDialog.dumpControls(*settings);
+	settings->sync();
 }
 
 void AudiogramDatabase::sPatients()

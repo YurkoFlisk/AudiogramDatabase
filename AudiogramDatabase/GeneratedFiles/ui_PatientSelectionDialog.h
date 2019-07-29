@@ -98,6 +98,8 @@ public:
 
 
         retranslateUi(PatientSelectionDialog);
+        QObject::connect(okPB, SIGNAL(clicked()), PatientSelectionDialog, SLOT(accept()));
+        QObject::connect(cancelPB, SIGNAL(clicked()), PatientSelectionDialog, SLOT(reject()));
 
         QMetaObject::connectSlotsByName(PatientSelectionDialog);
     } // setupUi

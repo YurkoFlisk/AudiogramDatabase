@@ -30,10 +30,9 @@ class Ui_AudiogramDatabaseClass
 {
 public:
     QAction *actionAbout;
-    QAction *actionNew;
     QAction *actionExit;
     QAction *actionPatients;
-    QAction *actionOptions;
+    QAction *actionSettings;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
@@ -54,17 +53,12 @@ public:
         AudiogramDatabaseClass->resize(631, 405);
         actionAbout = new QAction(AudiogramDatabaseClass);
         actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
-        actionNew = new QAction(AudiogramDatabaseClass);
-        actionNew->setObjectName(QString::fromUtf8("actionNew"));
-        actionNew->setCheckable(false);
-        actionNew->setChecked(false);
-        actionNew->setEnabled(true);
         actionExit = new QAction(AudiogramDatabaseClass);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
         actionPatients = new QAction(AudiogramDatabaseClass);
         actionPatients->setObjectName(QString::fromUtf8("actionPatients"));
-        actionOptions = new QAction(AudiogramDatabaseClass);
-        actionOptions->setObjectName(QString::fromUtf8("actionOptions"));
+        actionSettings = new QAction(AudiogramDatabaseClass);
+        actionSettings->setObjectName(QString::fromUtf8("actionSettings"));
         centralWidget = new QWidget(AudiogramDatabaseClass);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -123,7 +117,7 @@ public:
         menuBar->addAction(menuAbout->menuAction());
         menuFile->addAction(actionPatients);
         menuFile->addSeparator();
-        menuFile->addAction(actionOptions);
+        menuFile->addAction(actionSettings);
         menuFile->addSeparator();
         menuFile->addAction(actionExit);
         menuAbout->addAction(actionAbout);
@@ -137,10 +131,9 @@ public:
     {
         AudiogramDatabaseClass->setWindowTitle(QApplication::translate("AudiogramDatabaseClass", "AudiogramDatabase", nullptr));
         actionAbout->setText(QApplication::translate("AudiogramDatabaseClass", "About", nullptr));
-        actionNew->setText(QApplication::translate("AudiogramDatabaseClass", "New audiogram", nullptr));
         actionExit->setText(QApplication::translate("AudiogramDatabaseClass", "Exit", nullptr));
         actionPatients->setText(QApplication::translate("AudiogramDatabaseClass", "Edit patients", nullptr));
-        actionOptions->setText(QApplication::translate("AudiogramDatabaseClass", "Options", nullptr));
+        actionSettings->setText(QApplication::translate("AudiogramDatabaseClass", "Settings", nullptr));
         newPB->setText(QApplication::translate("AudiogramDatabaseClass", "New", nullptr));
         editPB->setText(QApplication::translate("AudiogramDatabaseClass", "Edit", nullptr));
         deletePB->setText(QApplication::translate("AudiogramDatabaseClass", "Delete", nullptr));

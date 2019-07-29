@@ -1,10 +1,15 @@
 #include "SettingsDialog.h"
 #include "LanguagesModel.h"
+#include "Audiogram.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent, const QSettings& settings, const QString& langsPath)
 	: QDialog(parent)
 {
 	ui.setupUi(this);
+
+	connect(ui.cancelPB, &QPushButton::clicked, this, &SettingsDialog::sCancel);
+	connect(ui.okPB, &QPushButton::clicked, this, &SettingsDialog::sOk);
+
 	initControls(settings, langsPath);
 }
 
@@ -28,4 +33,14 @@ void SettingsDialog::dumpControls(QSettings& settings)
 	settings.setValue("airCondColor", ui.airCP->getColor());
 	settings.setValue("boneCondColor", ui.boneCP->getColor());
 	settings.setValue("lang", ui.languageCB->currentData());
+}
+
+void SettingsDialog::sOk()
+{
+	accept();
+}
+
+void SettingsDialog::sCancel()
+{
+	reject();
 }

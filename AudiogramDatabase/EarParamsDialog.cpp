@@ -6,20 +6,23 @@ EarParamsDialog::EarParamsDialog(QWidget *parent)
 {
 	ui.setupUi(this);
 	
-	ui.autophonyCB->addItem("Not set", NOT_SET);
-	ui.autophonyCB->addItem("Yes", YES);
-	ui.autophonyCB->addItem("No", NO);
+	ui.autophonyCB->addItem(tr("Not set"), NOT_SET);
+	ui.autophonyCB->addItem(tr("Yes"), YES);
+	ui.autophonyCB->addItem(tr("No"), NO);
+	ui.autophonyCB->setCurrentIndex(0);
 
 	ui.bingTestCB->addItem(tr("Not set"), NOT_SET);
 	ui.bingTestCB->addItem(tr("Positive"), POSITIVE);
 	ui.bingTestCB->addItem(tr("Negative"), NEGATIVE);
+	ui.bingTestCB->setCurrentIndex(0);
 
 	ui.federiciTestCB->addItem(tr("Not set"), NOT_SET);
 	ui.federiciTestCB->addItem(tr("Positive (T > M)"), POSITIVE);
 	ui.federiciTestCB->addItem(tr("Negative (T < M)"), NEGATIVE);
+	ui.federiciTestCB->setCurrentIndex(0);
 
-	connect(ui.airPointsPB, QPushButton::clicked, this, sAirPoints);
-	connect(ui.bonePointsPB, QPushButton::clicked, this, sBonePoints);
+	connect(ui.airPointsPB, &QPushButton::clicked, this, &EarParamsDialog::sAirPoints);
+	connect(ui.bonePointsPB, &QPushButton::clicked, this, &EarParamsDialog::sBonePoints);
 }
 
 EarParamsDialog::~EarParamsDialog()

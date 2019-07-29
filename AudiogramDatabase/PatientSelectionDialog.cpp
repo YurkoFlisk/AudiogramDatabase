@@ -5,9 +5,9 @@ PatientSelectionDialog::PatientSelectionDialog(bool selection, QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.addPB, QPushButton::clicked, this, sAdd);
-	connect(ui.editPB, QPushButton::clicked, this, sEdit);
-	connect(ui.deletePB, QPushButton::clicked, this, sDelete);
+	connect(ui.addPB, &QPushButton::clicked, this, &PatientSelectionDialog::sAdd);
+	connect(ui.editPB, &QPushButton::clicked, this, &PatientSelectionDialog::sEdit);
+	connect(ui.deletePB, &QPushButton::clicked, this, &PatientSelectionDialog::sDelete);
 }
 
 PatientSelectionDialog::~PatientSelectionDialog()
@@ -41,5 +41,5 @@ int PatientSelectionDialog::getSelectedPatient() const
 void PatientSelectionDialog::setSelectedPatient(int idx)
 {
 	auto indexes = ui.patientsTV->model();
-	ui.patientsTV->selectRow(patientRow);
+	//ui.patientsTV->selectRow(patientRow);
 }
