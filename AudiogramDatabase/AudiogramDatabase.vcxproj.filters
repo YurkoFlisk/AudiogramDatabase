@@ -33,6 +33,12 @@
       <Extensions>ts</Extensions>
       <ParseFiles>false</ParseFiles>
     </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{93dc769b-36f5-4fcf-bcff-79e72c6a2146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\qcustomplot">
+      <UniqueIdentifier>{6a012eb7-666d-4aa1-a2d8-bb61e4bbe4b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,6 +77,9 @@
     <ClCompile Include="Audiogram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="3rdparty\qcustomplot\qcustomplot.cpp">
+      <Filter>3rdparty\qcustomplot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="AudiogramDatabase.h">
@@ -102,6 +111,9 @@
     </QtMoc>
     <QtMoc Include="LanguagesModel.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="3rdparty\qcustomplot\qcustomplot.h">
+      <Filter>3rdparty\qcustomplot</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
