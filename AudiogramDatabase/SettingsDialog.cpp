@@ -19,8 +19,8 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::initControls(const QSettings& settings, const QString& langsPath)
 {
-	ui.airCP->setColor(settings.value("airCondColor", DEFAULT_AIR_COLOR).value<QColor>());
-	ui.boneCP->setColor(settings.value("boneCondColor", DEFAULT_BONE_COLOR).value<QColor>());
+	ui.airCP->setColor(settings.value("firstSampColor", DEFAULT_SAMP1_COLOR).value<QColor>());
+	ui.boneCP->setColor(settings.value("secondSampColor", DEFAULT_SAMP2_COLOR).value<QColor>());
 
 	const QString langCode = settings.value("lang", DEFAULT_LANG).toString();
 	LanguagesModel* langsModel = new LanguagesModel(langsPath, this);

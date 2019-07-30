@@ -20,7 +20,7 @@
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
-#include "QtCharts"
+#include "3rdparty/qcustomplot/qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -29,8 +29,8 @@ class Ui_NewAudiogramDialog
 public:
     QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout;
-    QChartView *leftEarChart;
-    QChartView *rightEarChart;
+    QCustomPlot *leftEarCV;
+    QCustomPlot *rightEarCV;
     QHBoxLayout *horizontalLayout_4;
     QGroupBox *groupBox;
     QHBoxLayout *horizontalLayout_2;
@@ -54,7 +54,7 @@ public:
     {
         if (NewAudiogramDialog->objectName().isEmpty())
             NewAudiogramDialog->setObjectName(QString::fromUtf8("NewAudiogramDialog"));
-        NewAudiogramDialog->resize(771, 410);
+        NewAudiogramDialog->resize(546, 338);
         verticalLayout_2 = new QVBoxLayout(NewAudiogramDialog);
         verticalLayout_2->setSpacing(6);
         verticalLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -62,15 +62,24 @@ public:
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        leftEarChart = new QChartView(NewAudiogramDialog);
-        leftEarChart->setObjectName(QString::fromUtf8("leftEarChart"));
+        leftEarCV = new QCustomPlot(NewAudiogramDialog);
+        leftEarCV->setObjectName(QString::fromUtf8("leftEarCV"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(leftEarCV->sizePolicy().hasHeightForWidth());
+        leftEarCV->setSizePolicy(sizePolicy);
+        leftEarCV->setMinimumSize(QSize(200, 200));
 
-        horizontalLayout->addWidget(leftEarChart);
+        horizontalLayout->addWidget(leftEarCV);
 
-        rightEarChart = new QChartView(NewAudiogramDialog);
-        rightEarChart->setObjectName(QString::fromUtf8("rightEarChart"));
+        rightEarCV = new QCustomPlot(NewAudiogramDialog);
+        rightEarCV->setObjectName(QString::fromUtf8("rightEarCV"));
+        sizePolicy.setHeightForWidth(rightEarCV->sizePolicy().hasHeightForWidth());
+        rightEarCV->setSizePolicy(sizePolicy);
+        rightEarCV->setMinimumSize(QSize(200, 200));
 
-        horizontalLayout->addWidget(rightEarChart);
+        horizontalLayout->addWidget(rightEarCV);
 
 
         verticalLayout_2->addLayout(horizontalLayout);
@@ -78,6 +87,7 @@ public:
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setSpacing(6);
         horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setSizeConstraint(QLayout::SetDefaultConstraint);
         groupBox = new QGroupBox(NewAudiogramDialog);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
         horizontalLayout_2 = new QHBoxLayout(groupBox);

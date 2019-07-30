@@ -27,7 +27,7 @@ void PointsEditorDialog::setPoints(const std::vector<QPoint>& points)
 
 void PointsEditorDialog::sAdd()
 {
-	auto selItems = ui.pointsTV->selectionModel()->selectedIndexes();
+	const auto& selItems = ui.pointsTV->selectionModel()->selectedIndexes();
 	if (selItems.empty())
 		pointsModel.insertRow(pointsModel.rowCount());
 	else
@@ -36,7 +36,10 @@ void PointsEditorDialog::sAdd()
 
 void PointsEditorDialog::sDelete()
 {
-	const int selectedRow = ui.pointsTV->selectionModel()->selectedIndexes()[0].row();
+	const auto& selItems = ui.pointsTV->selectionModel()->selectedIndexes();
+	if (selItems.empty())
+		return;
+	const int selectedRow = selItems.front().row();
 	pointsModel.removeRow(selectedRow);
 }
 
@@ -178,8 +181,8 @@ QWidget* PointsDelegate::createEditor(QWidget* parent,
 	}
 	else
 	{
-		editor->setMinimum(-200); // dbHL
-		editor->setMaximum(0);
+		editor->setMinimum(-10);
+		editor->setMaximum(200); // dbHL
 	}
 	return editor;
 }

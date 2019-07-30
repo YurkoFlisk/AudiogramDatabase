@@ -2,20 +2,59 @@
 #include "PatientSelectionDialog.h"
 #include "EarParamsDialog.h"
 
-NewAudiogramDialog::NewAudiogramDialog(QColor airColor, QColor boneColor, QWidget *parent)
+GeneralizedLogTicker::GeneralizedLogTicker(qreal origin, qreal base, int subTickCount)
+	: origin(origin), base(base), subTickCount(subTickCount)
+{}
+
+QVector<double> GeneralizedLogTicker::createTickVector(double tickStep, const QCPRange& range)
+{
+	const int lowerExp = floor(log(range.lower / origin) / log(base));
+	const int upperExp = ceil(log(range.upper / origin) / log(base));
+	QVector<double> ret;
+	for (int i = lowerExp; i <= upperExp; ++i)
+		ret.push_back(origin * std::pow(base, i));
+	return ret;
+}
+
+int GeneralizedLogTicker::getSubTickCount(double tickStep)
+{
+	return subTickCount;
+}
+
+NewAudiogramDialog::NewAudiogramDialog(QColor firstColor, QColor secondColor, QWidget *parent)
 	: QDialog(parent), selectedSampleIdx(0)
 {
 	ui.setupUi(this);
 	QValidator* idValidator = new QIntValidator(0, 999999999, this);
 	ui.patientIDLE->setValidator(idValidator);
 	ui.firstSampleRB->setChecked(true);
-	ui.leftEarChart->setRenderHint(QPainter::Antialiasing);
-	ui.rightEarChart->setRenderHint(QPainter::Antialiasing);
 
-	airPen = QPen(airColor, 2, Qt::SolidLine);
-	bonePen = QPen(boneColor, 2, Qt::DashLine);
-	airBrush = airColor;
-	boneBrush = createCrossBrush(boneColor);
+	airPen[0] = QPen(firstColor, 2, Qt::SolidLine);
+	airPen[1] = QPen(secondColor, 2, Qt::SolidLine);
+	bonePen[0] = QPen(firstColor, 2, Qt::DashLine);
+	bonePen[1] = QPen(secondColor, 2, Qt::DashLine);
+	auto xTicker = QSharedPointer<GeneralizedLogTicker>(new GeneralizedLogTicker(1000));
+	auto yTicker = QSharedPointer<QCPAxisTickerFixed>(new QCPAxisTickerFixed);
+	yTicker->setTickStep(10);
+	yTicker->setScaleStrategy(QCPAxisTickerFixed::ssNone);
+	for (auto chart : { ui.leftEarCV, ui.rightEarCV })
+	{
+		chart->yAxis->setRangeReversed(true);
+
+		chart->xAxis->setScaleType(QCPAxis::stLogarithmic);
+		chart->yAxis->setScaleType(QCPAxis::stLinear);
+		chart->xAxis->setTicker(xTicker);
+		chart->yAxis->setTicker(yTicker);
+		// Range endpoints are adjusted because major ticks should fit comfortably inside the range
+		chart->xAxis->setRange(
+			Audiogram::DEFAULT_MIN_FREQUENCY * 0.9,
+			Audiogram::DEFAULT_MAX_FREQUENCY * 1.1);
+		chart->yAxis->setRange(
+			Audiogram::DEFAULT_MIN_LEVEL - 5,
+			Audiogram::DEFAULT_MAX_LEVEL + 5);
+		chart->xAxis->setLabel(tr("Frequency (Hz)"));
+		chart->yAxis->setLabel(tr("Level (dbHL)"));
+	}
 
 	connect(ui.patientSelectPB, &QPushButton::clicked, this, &NewAudiogramDialog::sPatientSelect);
 	connect(ui.leftEarPB, &QPushButton::clicked, this, &NewAudiogramDialog::sLeftEar);
@@ -46,24 +85,14 @@ Audiogram NewAudiogramDialog::getAudiogram() const
 	);
 }
 
-const QPen& NewAudiogramDialog::getAirPen() const
+const QPen& NewAudiogramDialog::getAirPen(int sample) const
 {
-	return airPen;
+	return airPen[sample];
 }
 
-const QPen& NewAudiogramDialog::getBonePen() const
+const QPen& NewAudiogramDialog::getBonePen(int sample) const
 {
-	return bonePen;
-}
-
-const QBrush& NewAudiogramDialog::getAirBrush() const
-{
-	return airBrush;
-}
-
-const QBrush& NewAudiogramDialog::getBoneBrush() const
-{
-	return boneBrush;
+	return bonePen[sample];
 }
 
 void NewAudiogramDialog::setPatientID(int id)
@@ -83,24 +112,14 @@ void NewAudiogramDialog::setAudiogram(const Audiogram& ag)
 	setEarsInfo(ag.earsData);
 }
 
-void NewAudiogramDialog::setAirPen(const QPen& pen)
+void NewAudiogramDialog::setAirPen(int sample, const QPen& pen)
 {
-	airPen = pen;
+	airPen[sample] = pen;
 }
 
-void NewAudiogramDialog::setBonePen(const QPen& pen)
+void NewAudiogramDialog::setBonePen(int sample, const QPen& pen)
 {
-	bonePen = pen;
-}
-
-void NewAudiogramDialog::setAirBrush(const QBrush& brush)
-{
-	airBrush = brush;
-}
-
-void NewAudiogramDialog::setBoneBrush(const QBrush& brush)
-{
-	boneBrush = brush;
+	bonePen[sample] = pen;
 }
 
 void NewAudiogramDialog::sPatientSelect()
@@ -127,13 +146,16 @@ void NewAudiogramDialog::sRightEar()
 void NewAudiogramDialog::sSampleSelect()
 {
 	if (ui.firstSampleRB->isChecked())
-	{
 		selectedSampleIdx = 0;
-	}
 	else
-	{
 		selectedSampleIdx = 1;
-	}
+}
+
+constexpr int NewAudiogramDialog::getGraphIndex(int sample, int conductivity)
+{
+	if (conductivity != COND_AIR && conductivity != COND_BONE)
+		return -1;
+	return sample * 2 + conductivity;
 }
 
 bool NewAudiogramDialog::editEarInfo(Ear& ear)
@@ -146,80 +168,44 @@ bool NewAudiogramDialog::editEarInfo(Ear& ear)
 	return true;
 }
 
-void NewAudiogramDialog::updateChart(QChartView* chartView, int earIdx)
+void NewAudiogramDialog::setGraphData(QCPGraph* graph, const Ear::PointList& points)
 {
-	QChart* chart = new QChart;
-	QLogValueAxis* xAxis = new QLogValueAxis;
-	QValueAxis* yAxis = new QValueAxis;
-	xAxis->setTitleText(tr("Frequency (Hz)"));
-	xAxis->setMinorTickCount(1);
-	xAxis->setBase(2);
-	xAxis->setMin(Audiogram::DEFAULT_MIN_FREQUENCY);
-	xAxis->setMax(Audiogram::DEFAULT_MAX_FREQUENCY);
-	yAxis->setTitleText(tr("Level (dbHL)"));
-	yAxis->setMinorTickCount(1);
-	yAxis->setMin(-120);
-	yAxis->setMax(5);
-	yAxis->setTickAnchor(0);
-	chart->addAxis(xAxis, Qt::AlignBottom);
-	chart->addAxis(yAxis, Qt::AlignLeft);
+	QVector<qreal> x, y;
+	if (points.size() <= 1)
+	{
+		graph->setData(x, y);
+		return;
+	}
+	for (const auto& point : points)
+	{
+		x.push_back(point.x());
+		y.push_back(point.y());
+	}
+	graph->setData(x, y);
+}
 
-	for (int sample : { 0, 1 })
+void NewAudiogramDialog::updateChart(QCustomPlot* chart, int earIdx)
+{
+	chart->clearGraphs();
+	for (int sample : {0, 1})
 	{
 		const Ear& ear = earsInfo[sample][earIdx];
-		addSeries(chart, xAxis, yAxis, ear.airCondPoints,
-			airBrush, airPen, QScatterSeries::MarkerShapeCircle);
-		addSeries(chart, xAxis, yAxis, ear.boneCondPoints,
-			boneBrush, bonePen, QScatterSeries::MarkerShapeRectangle);
+		QCPGraph* airGraph = chart->addGraph();
+		QCPGraph* boneGraph = chart->addGraph();
+		airGraph->setScatterStyle(QCPScatterStyle::ssDot);
+		airGraph->setPen(airPen[sample]);
+		boneGraph->setScatterStyle(QCPScatterStyle::ssCross);
+		boneGraph->setPen(bonePen[sample]);
+		setGraphData(airGraph, ear.airCondPoints);
+		setGraphData(boneGraph, ear.boneCondPoints);
 	}
-	chart->legend()->setVisible(false);
-
-	chartView->setChart(chart);
+	chart->replot();
 }
 
 void NewAudiogramDialog::updateCharts(int earIdx)
 {
 	if (earIdx == Audiogram::LEFT_EAR || earIdx == Audiogram::BOTH_EARS)
-		updateChart(ui.leftEarChart, Audiogram::LEFT_EAR);
+		updateChart(ui.leftEarCV, Audiogram::LEFT_EAR);
 	if (earIdx == Audiogram::RIGHT_EAR || earIdx == Audiogram::BOTH_EARS)
-		updateChart(ui.rightEarChart, Audiogram::RIGHT_EAR);
-}
-
-void NewAudiogramDialog::addSeries(QChart* chart, QLogValueAxis* xAxis, QValueAxis* yAxis,
-	const Ear::PointList& points, QBrush pointBrush,
-	QPen linePen, QScatterSeries::MarkerShape shape) const
-{
-	// Main series for plotting
-	QLineSeries* lineSeries = new QLineSeries;
-	lineSeries->setPen(linePen);
-	for (const QPoint& point : points)
-		lineSeries->append(point);
-	chart->addSeries(lineSeries);
-	lineSeries->attachAxis(xAxis);
-	lineSeries->attachAxis(yAxis);
-	// We have to add separate scatter series for points because
-	// line series doesn't allow to customize points
-	QScatterSeries* scatterSeries = new QScatterSeries;
-	scatterSeries->setPen(QPen(Qt::transparent));
-	scatterSeries->setBrush(pointBrush);
-	scatterSeries->setMarkerSize(15);
-	scatterSeries->setMarkerShape(shape);
-	for (const QPoint& point : points)
-		scatterSeries->append(point);
-	chart->addSeries(scatterSeries);
-	scatterSeries->attachAxis(xAxis);
-	scatterSeries->attachAxis(yAxis);
-}
-
-QBrush NewAudiogramDialog::createCrossBrush(QColor color)
-{
-	QImage crossImage(15, 15, QImage::Format_ARGB32);
-	crossImage.fill(Qt::transparent);
-	QPainter painter(&crossImage);
-	painter.setRenderHint(QPainter::Antialiasing);
-	painter.setPen(color);
-	painter.setBrush(color);
-	painter.drawLine(0, 0, 14, 14);
-	painter.drawLine(0, 14, 14, 0);
-	return QBrush(crossImage);
+		updateChart(ui.rightEarCV, Audiogram::RIGHT_EAR);
 }

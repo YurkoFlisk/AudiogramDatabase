@@ -5,8 +5,8 @@
 #include <QtCore>
 #include <QColor>
 
-inline const QColor DEFAULT_AIR_COLOR = Qt::red;
-inline const QColor DEFAULT_BONE_COLOR = Qt::blue;
+inline const QColor DEFAULT_SAMP1_COLOR = Qt::red;
+inline const QColor DEFAULT_SAMP2_COLOR = Qt::blue;
 
 enum TestResult {
 	NOT_SET, POSITIVE, NEGATIVE, YES = POSITIVE, NO = NEGATIVE
@@ -45,8 +45,10 @@ struct Audiogram
 	static constexpr int LEFT_EAR = 0;
 	static constexpr int RIGHT_EAR = 1;
 	static constexpr int BOTH_EARS = 2;
-	static constexpr int DEFAULT_MIN_FREQUENCY = 250;
-	static constexpr int DEFAULT_MAX_FREQUENCY = 8000;
+	static constexpr int DEFAULT_MIN_FREQUENCY = 250; // Hz
+	static constexpr int DEFAULT_MAX_FREQUENCY = 8000; // Hz
+	static constexpr int DEFAULT_MIN_LEVEL = -10; // dbHL
+	static constexpr int DEFAULT_MAX_LEVEL = 120; // dbHL
 
 	using PatientID = int;
 	using EarList = std::array<std::array<Ear, NUM_EARS>, NUM_SAMPLES>;

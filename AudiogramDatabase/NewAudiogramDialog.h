@@ -4,49 +4,59 @@
 #include "Audiogram.h"
 #include "ui_NewAudiogramDialog.h"
 
+class GeneralizedLogTicker : public QCPAxisTicker
+{
+	Q_GADGET
+
+public:
+	GeneralizedLogTicker(qreal origin = 1, qreal base = 2, int subTickCount = 1);
+	QVector<double> createTickVector(double tickStep, const QCPRange& range) override;
+	int getSubTickCount(double tickStep) override;
+private:
+	qreal origin;
+	qreal base;
+	int subTickCount;
+};
+
 class NewAudiogramDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
-	NewAudiogramDialog(QColor airColor, QColor boneColor, QWidget *parent = Q_NULLPTR);
+	static constexpr int COND_AIR = 0;
+	static constexpr int COND_BONE = 1;
+
+	NewAudiogramDialog(QColor firstColor, QColor secondColor, QWidget *parent = Q_NULLPTR);
 	~NewAudiogramDialog();
 
-	static QBrush createCrossBrush(QColor color);
 	// Getters
 	int getPatientID() const;
 	const Audiogram::EarList& getEarsInfo() const;
 	Audiogram getAudiogram() const;
-	const QPen& getAirPen() const;
-	const QPen& getBonePen() const;
-	const QBrush& getAirBrush() const;
-	const QBrush& getBoneBrush() const;
+	const QPen& getAirPen(int sample) const;
+	const QPen& getBonePen(int sample) const;
 	// Setters
 	void setPatientID(int);
 	void setEarsInfo(const Audiogram::EarList&);
 	void setAudiogram(const Audiogram&);
-	void setAirPen(const QPen&);
-	void setBonePen(const QPen&);
-	void setAirBrush(const QBrush&);
-	void setBoneBrush(const QBrush&);
+	void setAirPen(int sample, const QPen&);
+	void setBonePen(int sample, const QPen&);
 
 	void sPatientSelect();
 	void sLeftEar();
 	void sRightEar();
 	void sSampleSelect();
 private:
+	constexpr int getGraphIndex(int sample, int conductivity);
+
 	bool editEarInfo(Ear& ear);
-	void updateChart(QChartView* chartView, int earIdx);
+	void setGraphData(QCPGraph* graph, const Ear::PointList& points);
+	void updateChart(QCustomPlot* chart, int earIdx);
 	void updateCharts(int earIdx);
-	void addSeries(QChart* chart, QLogValueAxis* xAxis, QValueAxis* yAxis,
-		const Ear::PointList& points, QBrush pointBrush,
-		QPen linePen, QScatterSeries::MarkerShape pointShape) const;
 
 	int selectedSampleIdx;
-	QPen airPen;
-	QPen bonePen;
-	QBrush airBrush;
-	QBrush boneBrush;
+	QPen airPen[Audiogram::NUM_SAMPLES];
+	QPen bonePen[Audiogram::NUM_SAMPLES];
 	Audiogram::EarList earsInfo;
 	Ui::NewAudiogramDialog ui;
 };

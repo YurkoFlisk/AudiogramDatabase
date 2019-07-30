@@ -44,9 +44,9 @@ void AudiogramDatabase::setLanguage(QString langCode)
 
 void AudiogramDatabase::sNew()
 {
-	const QColor airCondColor = settings->value("airCondColor", DEFAULT_AIR_COLOR).value<QColor>();
-	const QColor boneCondColor = settings->value("boneCondColor", DEFAULT_BONE_COLOR).value<QColor>();
-	NewAudiogramDialog newAudiogramDialog(airCondColor, boneCondColor, this);
+	const QColor firstSampColor = settings->value("firstSampColor", DEFAULT_SAMP1_COLOR).value<QColor>();
+	const QColor secondSampColor = settings->value("secondSampColor", DEFAULT_SAMP2_COLOR).value<QColor>();
+	NewAudiogramDialog newAudiogramDialog(firstSampColor,secondSampColor, this);
 	if (newAudiogramDialog.exec() != QDialog::Accepted)
 		return;
 
